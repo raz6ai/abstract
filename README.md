@@ -2,17 +2,18 @@
 
 A family of four Claude Code skills for capturing structured end-of-session recaps and turning them into reusable project rules. Designed so sessions compound into a searchable knowledge base instead of evaporating when the context window closes.
 
-## The five skills
+## The six skills
 
 | Skill | Purpose |
 |-------|---------|
-| `/abstract` | Write a structured session recap to `<destination>/sessions/YYYY-MM-DD-<slug>.md`. |
+| `/abstract` | Write a structured session recap to `<destination>/sessions/YYYY-MM-DD-<slug>.md`. If a domain taxonomy is configured, prompts to multi-tag the session. |
 | `/abstract-history` | Same as `/abstract`, plus appends the full prompt history (user prompts verbatim, assistant turns summarized) read from Claude Code's JSONL transcript file. Secrets scrubbed by default. |
-| `/abstract-config` | First-run setup or reconfiguration. Walks through arrow-key menus to pick destination, lessons-file behavior, secret scrubbing, token budget, and rules destination. |
+| `/abstract-config` | First-run setup or reconfiguration. Walks through arrow-key menus to pick destination, lessons-file behavior, secret scrubbing, token budget, rules destination, and domain taxonomy. |
 | `/abstract-rule` | Read an existing session, scan it for rule candidates, and for each one let you pick "Claude writes it", "stub I'll fill in", or "skip". Every rule references the source session. Recommended only for complex sessions. |
+| `/abstract-compile` | Read every tagged session, group by domain, synthesize per-domain playbook skills (`abs-ui`, `abs-backend`, etc.) at `.claude/skills/abs-<domain>/SKILL.md`. Each playbook gives Claude domain-specific wisdom on demand. |
 | `/abstract-update` | Pull the latest version of the skills from GitHub and reinstall (user-scoped, project-scoped, or both). Restart Claude Code after running. |
 
-When you type `/abs` in Claude Code, all five show in the autocomplete dropdown.
+When you type `/abs` in Claude Code, all six show in the autocomplete dropdown. After running `/abstract-compile`, your generated playbooks (`/abs-ui`, `/abs-backend`, etc.) join them.
 
 ## Install
 
@@ -55,10 +56,11 @@ git clone https://github.com/raz6ai/abstract /tmp/abstract && /tmp/abstract/inst
 
 ## Typical workflow
 
-1. `/abstract-config` (once per project or globally) — pick destination and options.
-2. End of a work session: `/abstract` — write a recap.
+1. `/abstract-config` (once per project or globally) — pick destination, options, and optionally define a domain taxonomy (`ui`, `backend`, etc.).
+2. End of a work session: `/abstract` — write a recap. If a taxonomy is set, multi-tag the session by domain.
 3. If the session was unusually complex: `/abstract-rule` — extract reusable rules.
 4. If you want a full conversational record: `/abstract-history` — recap plus prompt history.
+5. After a batch of tagged sessions land: `/abstract-compile` — synthesize per-domain playbooks (`/abs-ui`, `/abs-backend`, etc.) so Claude can load domain-specific wisdom on demand in future sessions.
 
 ## What gets written
 
@@ -86,6 +88,7 @@ Stored at `./.claude/abstract.config.json` (per-project) or `~/.claude/abstract.
   "version": 1,
   "destination": "./.claude/sessions",
   "rulesDestination": "./.claude/rules",
+  "domains": ["ui", "backend", "auth"],
   "writeLessons": true,
   "scrubSecrets": true,
   "historyTokenBudget": 50000
@@ -96,6 +99,7 @@ Stored at `./.claude/abstract.config.json` (per-project) or `~/.claude/abstract.
 |-------|---------|
 | `destination` | Where `sessions/` and `lessons/` get written. Project-relative, sibling path, or absolute. `~` is expanded. |
 | `rulesDestination` | Where `/abstract-rule` writes rule files. Defaults to `./.claude/rules`. |
+| `domains` | Optional taxonomy used by `/abstract` (tag prompt) and `/abstract-compile` (playbook grouping). Omit or set to `[]` to disable tagging entirely. |
 | `writeLessons` | If `true`, write a separate `lessons/` file when 2+ reusable lessons emerge. |
 | `scrubSecrets` | If `true`, redact API keys, tokens, and credentials from prompt history before writing. |
 | `historyTokenBudget` | Soft cap for `/abstract-history` output. Older assistant turns get summarized when over budget. |
@@ -121,9 +125,11 @@ For `/abstract-history`, by default the skill scans extracted prompts for:
 
 Matches are replaced with `[REDACTED-<kind>]` and a per-kind count is reported. Turn off via config if your project never sees secrets.
 
-## Why five skills instead of one?
+## Why six skills instead of one?
 
-Claude Code's autocomplete only shows top-level skill names — args you pass to a skill (`/abstract history`) aren't discoverable in the dropdown. Splitting into five skills means typing `/abs` surfaces all of them, so users find the modes they need without reading the README first.
+Claude Code's autocomplete only shows top-level skill names — args you pass to a skill (`/abstract history`) aren't discoverable in the dropdown. Splitting into six skills means typing `/abs` surfaces all of them, so users find the modes they need without reading the README first.
+
+The compiled `abs-<domain>` playbooks follow the same convention: once you run `/abstract-compile`, your `/abs-ui`, `/abs-backend`, etc. also show up in autocomplete alongside the abstract family.
 
 ## Limitations
 

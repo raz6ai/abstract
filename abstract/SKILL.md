@@ -53,6 +53,20 @@ Pick one primary category. Use `other` if nothing fits.
 
 Short kebab-case description of the session (e.g. `auth-redirect-fix`, `tenant-modal-refactor`). Under 40 chars. If a file already exists at the target path, append `-2`, `-3`, etc.
 
+## Step 4.5: Tag domains (only if config.domains is non-empty)
+
+If `config.domains` exists and is non-empty, the user has defined a taxonomy for `/abstract-compile`. Show them a multi-select prompt so this session can land in the right per-domain playbooks.
+
+Use **AskUserQuestion** with `multiSelect: true`:
+
+- Question: `Which domains does this session relate to? (Used by /abstract-compile.)`
+- Header: `Domains`
+- Options: one per domain from `config.domains`. Add a final option `None / skip` so the user can opt out.
+
+If the user picks `None / skip` (or doesn't pick anything), set `domains: []` in the frontmatter — the session is untagged and won't show up in any playbook.
+
+If `config.domains` is missing or empty, skip this step silently. The user hasn't set up a taxonomy yet; recap proceeds untagged.
+
 ## Step 5: Write the recap
 
 Target path:
@@ -68,6 +82,7 @@ date: YYYY-MM-DD
 category: <one of step 3>
 scope: [list of files, components, or systems touched]
 tags: [domain tags — e.g. api, auth, typography]
+domains: [list from step 4.5, or empty if untagged]
 ---
 
 # <Plain-English title of what was done>

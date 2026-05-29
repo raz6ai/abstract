@@ -43,7 +43,7 @@ If `$LATEST` is empty, tell the user no transcript was found at `$TRANSCRIPT_DIR
 
 ## Step 3: Write the standard recap
 
-Run steps 2-6 from `/abstract` (gather context → classify → choose slug → write the file → optional lessons file). Use the same `<destination>/sessions/YYYY-MM-DD-<slug>.md` path.
+Run steps 2-6 from `/abstract` (gather context → classify → choose slug → **tag domains via step 4.5 if `config.domains` is non-empty** → write the file → optional lessons file). Use the same `<destination>/sessions/YYYY-MM-DD-<slug>.md` path. The frontmatter must include the `domains` field if a taxonomy is configured.
 
 ## Step 4: Parse transcript turns
 

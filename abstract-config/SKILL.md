@@ -67,6 +67,29 @@ Options:
 
 If the user hasn't run `/abstract-rule` yet, you may skip this step and let `/abstract-rule` ask on first invocation. Mention this to the user.
 
+## Step 4.5: Manage domain taxonomy (for /abstract-compile)
+
+Domains are the labels you can tag sessions with so `/abstract-compile` can synthesize per-domain playbooks (`abs-ui`, `abs-backend`, etc.). Setting up a taxonomy is optional — the rest of Abstract works without it.
+
+Show the current `config.domains` if any exist. Then use **AskUserQuestion**:
+
+Question: `Set up or modify your domain taxonomy?`
+Header: `Domains`
+Options:
+1. **Use suggested defaults** — adds `ui`, `backend`, `auth`, `data`, `infra` to the config.
+2. **Custom list** — you type a comma-separated list (e.g. `ui, api, data, ml`).
+3. **Add to existing** — append new domains to whatever's already there.
+4. **Remove some** — pick existing domains to delete (only shown if some exist).
+5. **Skip / leave as-is** — keep whatever's in the config (or empty if nothing).
+
+Follow-up questions depend on choice:
+- Custom list / Add to existing: accept freeform comma-separated text. Trim whitespace, lowercase, kebab-case any spaces. Dedup against existing.
+- Remove some: AskUserQuestion multiSelect of existing domains. Drop the picked ones.
+
+Persist the final list as `config.domains`. If empty after edits, omit the field (or set to `[]`).
+
+Tell the user what the final taxonomy is and that they can re-run `/abstract-config` any time to adjust it.
+
 ## Step 5: Pick scope
 
 If the user picked a destination INSIDE the project (`./...`), default to per-project config (`./.claude/abstract.config.json`).
@@ -86,11 +109,14 @@ Options:
   "version": 1,
   "destination": "<resolved path>",
   "rulesDestination": "<resolved path or null>",
+  "domains": ["ui", "backend", "auth"],
   "writeLessons": true,
   "scrubSecrets": true,
   "historyTokenBudget": 50000
 }
 ```
+
+`domains` may be omitted entirely if the user hasn't set up a taxonomy. `/abstract-compile` will bootstrap it on first run if missing.
 
 `mkdir -p` the parent directory if needed. Pretty-print the JSON (2-space indent).
 
