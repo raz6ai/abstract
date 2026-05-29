@@ -4,12 +4,17 @@ A portable Claude Code skill for capturing structured end-of-session recaps. Des
 
 ## Install
 
-Drop this folder into one of:
+```bash
+# User-scoped (recommended — available in every project)
+git clone https://github.com/raz6ai/abstract ~/.claude/skills/abstract
 
-- **Project-scoped:** `<your-project>/.claude/skills/abstract/`
-- **User-scoped:** `~/.claude/skills/abstract/` (available across every project)
+# Or project-scoped (lives in one repo)
+git clone https://github.com/raz6ai/abstract .claude/skills/abstract
+```
 
 Claude Code picks up new skills on the next launch. First time you invoke `/abstract`, it walks you through picking a destination folder.
+
+To update later: `cd ~/.claude/skills/abstract && git pull`.
 
 ## Usage
 
