@@ -2,7 +2,7 @@
 
 A family of four Claude Code skills for capturing structured end-of-session recaps and turning them into reusable project rules. Designed so sessions compound into a searchable knowledge base instead of evaporating when the context window closes.
 
-## The four skills
+## The five skills
 
 | Skill | Purpose |
 |-------|---------|
@@ -10,8 +10,9 @@ A family of four Claude Code skills for capturing structured end-of-session reca
 | `/abstract-history` | Same as `/abstract`, plus appends the full prompt history (user prompts verbatim, assistant turns summarized) read from Claude Code's JSONL transcript file. Secrets scrubbed by default. |
 | `/abstract-config` | First-run setup or reconfiguration. Walks through arrow-key menus to pick destination, lessons-file behavior, secret scrubbing, token budget, and rules destination. |
 | `/abstract-rule` | Read an existing session, scan it for rule candidates, and for each one let you pick "Claude writes it", "stub I'll fill in", or "skip". Every rule references the source session. Recommended only for complex sessions. |
+| `/abstract-update` | Pull the latest version of the skills from GitHub and reinstall (user-scoped, project-scoped, or both). Restart Claude Code after running. |
 
-When you type `/abs` in Claude Code, all four show in the autocomplete dropdown.
+When you type `/abs` in Claude Code, all five show in the autocomplete dropdown.
 
 ## Install
 
@@ -38,11 +39,19 @@ Restart Claude Code after installing. Then run `/abstract-config` once to pick w
 
 ## To update
 
+Once installed, the easiest way to update is to invoke the skill itself:
+
+```
+/abstract-update
+```
+
+It clones the latest, detects whether you're on user-scoped or project-scoped (or both), and reinstalls. Restart Claude Code after.
+
+If `/abstract-update` isn't available yet (you installed before it was added), re-run the install command:
+
 ```bash
 git clone https://github.com/raz6ai/abstract /tmp/abstract && /tmp/abstract/install.sh && rm -rf /tmp/abstract
 ```
-
-(Re-run the install command. It overwrites the four skill folders.)
 
 ## Typical workflow
 
@@ -112,9 +121,9 @@ For `/abstract-history`, by default the skill scans extracted prompts for:
 
 Matches are replaced with `[REDACTED-<kind>]` and a per-kind count is reported. Turn off via config if your project never sees secrets.
 
-## Why four skills instead of one?
+## Why five skills instead of one?
 
-Claude Code's autocomplete only shows top-level skill names — args you pass to a skill (`/abstract history`) aren't discoverable in the dropdown. Splitting into four skills means typing `/abs` surfaces all four, so users find the modes they need without reading the README first.
+Claude Code's autocomplete only shows top-level skill names — args you pass to a skill (`/abstract history`) aren't discoverable in the dropdown. Splitting into five skills means typing `/abs` surfaces all of them, so users find the modes they need without reading the README first.
 
 ## Limitations
 

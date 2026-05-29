@@ -8,7 +8,7 @@ set -euo pipefail
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 TARGET="${ABSTRACT_INSTALL_DIR:-$HOME/.claude/skills}"
 
-SKILLS=(abstract abstract-history abstract-config abstract-rule)
+SKILLS=(abstract abstract-history abstract-config abstract-rule abstract-update)
 
 mkdir -p "$TARGET"
 
